@@ -1,11 +1,11 @@
 package Cotizador;
 
-import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import Utilidades.waitCuore;
 
 public class AccesoCotizador {
 	
@@ -15,17 +15,17 @@ public class AccesoCotizador {
     
     
     //espera a que exista y cliquea sobre el boton de la sección Cotizacion
-    driver.manage().timeouts().implicitlyWait(100, TimeUnit.SECONDS); 
-    wait.until(ExpectedConditions.elementToBeClickable(By.id("mainMenuComercial")));
-    Thread.sleep(7000);
-    driver.findElement(By.cssSelector(".img-comercial.menu-icon")).click();
-    //espera a que exista y cliquea sobre el boton para acceder a la sección Cotizacion
-    wait.until(ExpectedConditions.elementToBeClickable(By.id("menuCotizaciones")));
-    driver.findElement(By.id("menuCotizaciones")).click();
-    Thread.sleep(3000);
-    //espera a que exista y cliquea sobre el boton para generar una Cotizacion
-    wait.until(ExpectedConditions.elementToBeClickable(By.id("addQuote")));
-    driver.findElement(By.id("addQuote")).click();
-
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("mainMenuComercial")));
+		waitCuore.repited(driver, wait);
+		Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
+		driver.findElement(By.cssSelector(".img-comercial.menu-icon")).click();
+		//espera a que exista y cliquea sobre el boton para acceder a la sección Cotizacion
+		waitCuore.repited(driver, wait);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("menuCotizaciones")));
+		driver.findElement(By.id("menuCotizaciones")).click();
+		Thread.sleep(2000);
 	}
 }

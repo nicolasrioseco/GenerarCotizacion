@@ -1,6 +1,5 @@
 package Bienes.BienXActivos;
 
-import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -8,33 +7,43 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import Utilidades.waitCuore;
+
 public class AnalisisBienActivos {
 	
-	public void analisisBienActivos(WebDriver driver, WebDriverWait wait, String fechaDesde, String fechaHasta) throws InterruptedException{    
+	public void analisisBienActivos(WebDriver driver, WebDriverWait wait, String fechaHasta) throws InterruptedException{    
     
 		/*             Acceso al Análisis de Bien por Activos         */
     
 		
 	    //espera a que exista y cliquea sobre el boton de la sección de Inbox
-	    driver.manage().timeouts().implicitlyWait(100, TimeUnit.SECONDS);
-	    Thread.sleep(4000);
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
 	    wait.until(ExpectedConditions.elementToBeClickable(By.id("searchSupplierDoSearch")));
-	    Thread.sleep(6000);
 	    driver.findElement(By.id("secondaryMarketAnalysisAssets")).sendKeys("Mercado QA");
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
 	    driver.findElement((By.id("searchSupplierDoSearch"))).click();
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
+		Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
 	    wait.until(ExpectedConditions.elementToBeClickable(By.id("spplierSearch")));
 	    driver.findElement(By.id("supplierDocNumberSearch")).sendKeys("30678519681");
 	    Thread.sleep(1500);
 	    driver.findElement((By.id("spplierSearch"))).click();
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
 	    wait.until(ExpectedConditions.elementToBeClickable(By.id("checkall")));
 	    driver.findElement((By.id("checkall"))).click();
 	    driver.findElement((By.id("supplierAccept"))).click();
 	    Thread.sleep(800);
-	    driver.findElement(By.xpath("//input[contains(@id, 'select_picker_depreciationDate')]")).sendKeys("15/01/2019");
+	    driver.findElement(By.xpath("//input[contains(@id, 'select_picker_depreciationDate')]")).click();
+	    driver.findElement(By.xpath("//td[contains(@class, 'today')]")).click();
 	    driver.findElement(By.id("depreciationValue")).sendKeys("700000");
 	    driver.findElement(By.id("depreciationFMV")).sendKeys("700000");
 	    Select moneda = new Select(driver.findElement(By.xpath("//*[contains(@id, 'select_picker_depreciationCurrency')]")));
-	    moneda.selectByValue("1000");
+	    waitCuore.repitedCampos(driver, wait, "1000", moneda, "value");
 	    driver.findElement(By.id("depreciation1Porc")).sendKeys("10");
 	    driver.findElement(By.id("depreciation2Porc")).sendKeys("20");
 	    driver.findElement(By.id("depreciation3Porc")).sendKeys("30");
@@ -53,17 +62,18 @@ public class AnalisisBienActivos {
 	    Thread.sleep(1000);
 	    driver.findElement(By.id("ccrTerm2")).sendKeys("36" + Keys.TAB + "11" + Keys.ENTER);
 	    driver.findElement(By.id("crrResidualValue2")).sendKeys("30");
-	    driver.findElement(By.xpath("//input[contains(@id, 'select_picker_resolutionFrom')]")).sendKeys(fechaDesde);
+	    driver.findElement(By.xpath("//input[contains(@id, 'select_picker_resolutionFrom')]")).click();
+	    driver.findElement(By.xpath("//td[contains(@class, 'today')]")).click();
+	    driver.findElement(By.xpath("//input[contains(@id, 'select_picker_resolutionUnti')]")).click();
 	    driver.findElement(By.xpath("//input[contains(@id, 'select_picker_resolutionUnti')]")).sendKeys(fechaHasta + "/2020");
+	    driver.findElement(By.xpath("//td[contains(@class, 'active')]")).click();
 	    driver.findElement(By.id("textArea")).sendKeys("Analisis Activos Automatizado QA");
 	    driver.findElement(By.xpath("//*[@id=\"router_container\"]/app-analisis-bien/analizar-bien-activo/form/div/div/div/div/button[3]")).click();
-	    wait.until(ExpectedConditions.elementToBeClickable(By.id("focusElement")));
 	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
 	    driver.findElement(By.id("focusElement")).click();
 	    wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'Bandeja de Tareas')]")));
-	    String mensaje = new String (driver.findElement(By.xpath("//div[contains(text(),'El Análisis se ha finalizado correctamente')]")).getText());
 	    //driver.findElement(By.xpath("//div[contains(text(),'El Análisis se ha finalizado correctamente')]")).click();
-	    System.out.println(mensaje);
-	    Thread.sleep(7000);
+	    System.out.println("El Análisis por Activos se ha finalizado correctamente");
 	}
 }

@@ -2,7 +2,10 @@ package Bienes.Bien;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import Utilidades.waitCuore;
 
 public class BusquedaBien {
 	
@@ -13,10 +16,13 @@ public class BusquedaBien {
 		/*             Búsqueda de Bienes         */
     
 	    //Buscar Modelo QA
-		Thread.sleep(1000);
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("nombreSearch")));
 	    driver.findElement(By.id("nombreSearch")).sendKeys(version);
 	    driver.findElement(By.id("BuscarBusquedaBienes")).click();
-	    Thread.sleep(6000);
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
 	    String resultado = driver.findElement(By.xpath("//p[contains(@class, 'panel-title')]")).getText();
 	    String[] resultadoParcial = (resultado.split("\\| "))[1].split(" ítems");
 	    if (resultadoParcial[0].equals("0")) {

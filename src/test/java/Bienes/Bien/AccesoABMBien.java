@@ -1,11 +1,11 @@
 package Bienes.Bien;
 
-import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import Utilidades.waitCuore;
 
 public class AccesoABMBien {
 	
@@ -15,17 +15,20 @@ public class AccesoABMBien {
     
     
 	    //espera a que exista y cliquea sobre el boton de la sección de Configuraciones
-	    driver.manage().timeouts().implicitlyWait(100, TimeUnit.SECONDS); 
-	    wait.until(ExpectedConditions.elementToBeClickable(By.id("mainMenuConfiguracion")));
-	    Thread.sleep(7000);
+	    Thread.sleep(1000);
+		waitCuore.repited(driver, wait);
+		Thread.sleep(3000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("mainMenuConfiguracion")));
+		waitCuore.repited(driver, wait);
 	    driver.findElement(By.id("mainMenuConfiguracion")).click();
 	    //espera a que exista y cliquea sobre el boton para desplegar las opciones de Bienes
+	    waitCuore.repited(driver, wait);
 	    wait.until(ExpectedConditions.elementToBeClickable(By.id("subMenuBienes")));
 	    driver.findElement(By.id("subMenuBienes")).click();
-	    Thread.sleep(1000);
+	    Thread.sleep(3000);
+	    waitCuore.repited(driver, wait);
 	    //espera a que exista y cliquea sobre el boton para acceder al ABM de Bienes
 	    wait.until(ExpectedConditions.elementToBeClickable(By.id("menuBienes")));
 	    driver.findElement(By.id("menuBienes")).click();
-	    Thread.sleep(5000);
 	}
 }

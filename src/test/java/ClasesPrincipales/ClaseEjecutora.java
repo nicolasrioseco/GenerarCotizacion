@@ -6,8 +6,6 @@ import java.time.format.DateTimeFormatter;
 
 import org.junit.Before;
 import org.junit.Test;
-import Utilidades.CreateDriver;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -45,6 +43,9 @@ import Cotizador.AccesoCotizador;
 import Cotizador.AprobarCotizacion;
 import Cotizador.BuscarCotizacion;
 import Cotizador.NewCotizacion;
+import Impuestos.AccesoImpuestos;
+import Impuestos.AltaImpuestos;
+import Impuestos.BusquedaImpuestos;
 import MetodosLogueo.Login;
 import Producto.AccesoProducto;
 import Producto.AltaProducto;
@@ -65,27 +66,32 @@ import Tasas.ABMTasaTTR.BusquedaTTR;
 import Tasas.ABMTasas.AccesoABMTasas;
 import Tasas.ABMTasas.AltaTasa;
 import Tasas.ABMTasas.BusquedaTasa;
+import Utilidades.CreateDriver;
 
 public class ClaseEjecutora 
 {
 
-	WebDriver driver; 
-	String atributo = "Atributo QA26";
-	String clase = "Clase QA26";
-	String subclase = "SubClase QA26";
-	String marca = "Marca QA26";
-	String modelo = "Modelo QA26";
-	String version = "Versión QA26";
-	String subtasa = "Tasa Fija QA26";
-	String nombreProveedor = "Proveedor QA26";
-	String docProveedor = "30707016066";
+	WebDriver driver;
+	String provincia = "CHACO";
+	String porcentajeImpoGral = "15";
+	String usuario = "cuore.admin.QA";
+	String password = "Calidad_01";
+	String atributo = "Atributo N4";
+	String clase = "Clase N4";
+	String subclase = "SubClase N4";
+	String marca = "Marca N4";
+	String modelo = "Modelo N4";
+	String version = "Versión N4";
+	String subtasa = "Tasa Fija N4";
+	String nombreProveedor = "Proveedor N4";
+	String docProveedor = "30623373084";
 	String fechaDesde;
 	String fechaHasta;
-	String acuerdo = "Acuerdo QA26";
+	String acuerdo = "Acuerdo N4";
 	String precioAcuerdo = "1500";
 	String markUpAcuerdo = "550";
-	String servicio = "Servicio QA26";
-	String producto = "Producto QA26";
+	String servicio = "Servicio N4";
+	String producto = "Producto N4";
 	//String operacion = "220";
 	
 	
@@ -96,7 +102,8 @@ public class ClaseEjecutora
 		System.out.println("Accediendo a Cuore desde Chrome");
 		/*               Login              */
 		CreateDriver setCuore = new CreateDriver();
-		driver = setCuore.initConfig();
+		setCuore.initConfig();
+		driver = CreateDriver.driver;
 		System.out.println("Acceso Exitoso");
 		
 	    LocalDate date = LocalDate.now();
@@ -107,19 +114,43 @@ public class ClaseEjecutora
 	    
 	    //             Loggin                   
 	    
-		WebDriverWait wait = new WebDriverWait(driver, 40);
+		WebDriverWait wait = new WebDriverWait(driver, 2);
 		
 		System.out.println("Inicio del Logeo en Cuore");
 		//               Login              
 		Login login = new Login();
-		login.login(driver, wait);
+		login.login(driver, wait, usuario, password);
 		System.out.println("Logueo exitoso");
     }
 	
 	@Test
 	public void ABMs_Modulos() throws Throwable {
 		
-		WebDriverWait wait = new WebDriverWait(driver, 40);
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		
+      	//			Alta de Impuestos 
+
+		System.out.println("Accediendo al ABM de Impuestos");
+		//               ABM Impuestos              
+		AccesoImpuestos impuestos = new AccesoImpuestos();
+		impuestos.accesoImpuesto(driver, wait);
+		System.out.println("Acceso exitoso a Configuración de Impuestos");
+	    
+		System.out.println("Buscando Impuestos");
+		//               Buscar Atributos              
+		BusquedaImpuestos busquedaImpuesto = new BusquedaImpuestos();
+		int impuestoItems = busquedaImpuesto.buscarImpuesto(driver, wait, provincia);
+		System.out.println("Se encontraron " + impuestoItems + " configuraciones existentes");
+		
+		
+		if (impuestoItems == 0) {
+			System.out.println("Configurando impuesto");
+			//               Buscar Atributos              
+			AltaImpuestos altaImpuestos = new AltaImpuestos();
+			altaImpuestos.configImpuesto(driver, wait, provincia, porcentajeImpoGral);
+		}else {
+			System.out.println("Ya se encontraba configurado el impuesto para la provincia de " + provincia);
+		}
 		
 		
       	//			Alta de Atributo     
@@ -136,12 +167,16 @@ public class ClaseEjecutora
 		int atributoItems = busquedaAtributo.buscarAtributo(driver, wait, atributo);
 		System.out.println("Se encontraron " + atributoItems + " ítems");
 		
-		System.out.println("Creando Atributo");
-		//               Buscar Atributos              
-		AltaAtributo altaAtributo = new AltaAtributo();
-		altaAtributo.crearAtributo(driver, wait, atributoItems, atributo);
-		System.out.println("Se finalizó correctamente el alta de atributos");
 		
+		if (atributoItems == 0) {
+			System.out.println("Creando Atributo");
+			//               Buscar Atributos              
+			AltaAtributo altaAtributo = new AltaAtributo();
+			altaAtributo.crearAtributo(driver, wait, atributo);
+			System.out.println("Se finalizó correctamente el alta de atributos");
+		}else {
+			System.out.println("Ya existía el atributo " + atributo);
+		}
 		
 	    //             Alta de Clase                   
 		
@@ -158,13 +193,15 @@ public class ClaseEjecutora
 		int claseItems = busquedaClase.buscarClase(driver, wait, clase);
 		System.out.println("Se encontraron " + claseItems + " ítems");
 		
-		System.out.println("Creando Clase");
-		//               Crear Clase              
-		AltaClase altaClase = new AltaClase();
-		altaClase.crearClase(driver, wait, claseItems, clase);
-		System.out.println("Se finalizó correctamente el alta de clases");
-		
-		
+		if (claseItems == 0) {
+			System.out.println("Creando Clase");
+			//               Crear Clase              
+			AltaClase altaClase = new AltaClase();
+			altaClase.crearClase(driver, wait, clase);
+			System.out.println("Se finalizó correctamente el alta de clases");
+		}else {
+			System.out.println("Ya existía la clase " + clase);
+		}
 		
 		//             Alta de SubClase                   
 		
@@ -181,13 +218,16 @@ public class ClaseEjecutora
 		int subclaseItems = busquedaSubClase.buscarSubClase(driver, wait, subclase);
 		System.out.println("Se encontraron " + subclaseItems + " ítems");
 		
-		System.out.println("Creando SubClase");
-		//               Crear SubClase              
-		AltaSubClase altaSubClase = new AltaSubClase();
-		altaSubClase.crearSubClase(driver, wait, subclaseItems, atributo, clase, subclase);
-		System.out.println("Se finalizó correctamente el alta de subclases");		
 		
-		
+		if (subclaseItems == 0) {
+			System.out.println("Creando SubClase");
+			//               Crear SubClase              
+			AltaSubClase altaSubClase = new AltaSubClase();
+			altaSubClase.crearSubClase(driver, wait, atributo, clase, subclase);
+			System.out.println("Se finalizó correctamente el alta de subclases");		
+		}else {
+			System.out.println("Ya existía la subclase " + subclase);
+		}
 		
 		//             Alta de Marca                   
 		
@@ -204,11 +244,15 @@ public class ClaseEjecutora
 		int marcaItems = busquedaMarca.buscarMarca(driver, wait, marca);
 		System.out.println("Se encontraron " + marcaItems + " ítems");
 		
-		System.out.println("Creando Asociación de Marca");
-		//               Crear Marca              
-		AltaMarca altaMarca = new AltaMarca();
-		altaMarca.crearMarca(driver, wait, marcaItems, clase, subclase, marca);
-		System.out.println("Se finalizó correctamente la asociación de Marca");
+		if (marcaItems == 0) {
+			System.out.println("Creando Asociación de Marca");
+			//               Crear Marca              
+			AltaMarca altaMarca = new AltaMarca();
+			altaMarca.crearMarca(driver, wait, clase, subclase, marca);
+			System.out.println("Se finalizó correctamente la asociación de Marca");
+		}else {
+			System.out.println("Ya existía la asociación de marca " + subclase);
+		}		
 		
 		
 		
@@ -227,11 +271,15 @@ public class ClaseEjecutora
 		int modeloItems = busquedaModelo.buscarModelo(driver, wait, modelo);
 		System.out.println("Se encontraron " + modeloItems + " ítems");
 		
-		System.out.println("Creando Modelo");
-		//               Crear Modelo              
-		AltaModelo altaModelo = new AltaModelo();
-		altaModelo.crearModelo(driver, wait, modeloItems, clase, subclase, marca, modelo);
-		System.out.println("Se finalizó correctamente el alta de Modelo");
+		if (modeloItems == 0) {
+			System.out.println("Creando Modelo");
+			//               Crear Modelo              
+			AltaModelo altaModelo = new AltaModelo();
+			altaModelo.crearModelo(driver, wait, clase, subclase, marca, modelo);
+			System.out.println("Se finalizó correctamente el alta de Modelo");
+		}else {
+			System.out.println("Ya existía el modelo " + modelo);
+		}		
 		
 		
 		
@@ -265,7 +313,7 @@ public class ClaseEjecutora
 			analisisActivos.analisisBienActivos(driver, wait, version);
 			
 			AnalisisBienActivos analisisBienActivos = new AnalisisBienActivos();
-			analisisBienActivos.analisisBienActivos(driver, wait, fechaDesde, fechaHasta);
+			analisisBienActivos.analisisBienActivos(driver, wait, fechaHasta);
 			
 
 			//			Analisis Bien por Seguros           
@@ -302,14 +350,17 @@ public class ClaseEjecutora
 		
 		System.out.println("Buscando la subtasa " + subtasa);
 		BusquedaTasa busquedaTasa = new BusquedaTasa();
-		int cantTasa = busquedaTasa.buscarTasa(driver, subtasa);
+		int cantTasa = busquedaTasa.buscarTasa(driver, subtasa, wait);
 		System.out.println("Se encontraron " + cantTasa + " subtasas con la descripcion ingresada");
 		
-		System.out.println("Creando SubTasa");
-		AltaTasa altaTasa = new AltaTasa();
-		altaTasa.crearTasa(driver, wait, cantTasa, subtasa);
-		System.out.println("Se finalizó correctamente el alta de SubTasa");
-		
+		if (cantTasa == 0) {
+			System.out.println("Creando SubTasa");
+			AltaTasa altaTasa = new AltaTasa();
+			altaTasa.crearTasa(driver, wait, subtasa);
+			System.out.println("Se finalizó correctamente el alta de SubTasa");
+		}else {
+			System.out.println("Ya existía la subtasa " + subtasa);
+		}
 		
 		
 		//			Alta de Tasa TTR			
@@ -322,11 +373,14 @@ public class ClaseEjecutora
 		int cantTTR = busquedaTTR.buscarTTR(driver, wait, subtasa);
 		System.out.println("Se encontraron " + cantTTR + " tasas TTR con la descripcion ingresada");
 		
-		System.out.println("Creando Tasa TTR");
-		AltaTTR altaTTR = new AltaTTR();
-		altaTTR.crearTTR(driver, wait, cantTTR, subtasa);
-		System.out.println("Se finalizó correctamente el alta de tasa TTR");
-		
+		if (cantTTR == 0) {
+			System.out.println("Creando Tasa TTR");
+			AltaTTR altaTTR = new AltaTTR();
+			altaTTR.crearTTR(driver, wait, subtasa);
+			System.out.println("Se finalizó correctamente el alta de tasa TTR");
+		}else {
+			System.out.println("Ya existía la ttr para la subtasa " + subtasa);
+		}
 		
 		
 		//			Alta de Proveedor			
@@ -336,14 +390,17 @@ public class ClaseEjecutora
 		
 		System.out.println("Buscando el proveedor " + docProveedor);
 		BusquedaProveedor busquedaProveedor = new BusquedaProveedor();
-		int cantProv = busquedaProveedor.buscarProveedor(driver, docProveedor);
+		int cantProv = busquedaProveedor.buscarProveedor(driver, docProveedor, wait);
 		System.out.println("Se encontraron " + cantProv + "Proveedores con la descripcion ingresada");
 		
-		System.out.println("Creando Proveedor");
-		AltaProveedor altaProveedor = new AltaProveedor();
-		altaProveedor.crearProveedor(driver, wait, cantProv, nombreProveedor, docProveedor);
-		System.out.println("Se finalizó correctamente el alta de Proveedor");
-		
+		if (cantProv == 0) {
+			System.out.println("Creando Proveedor");
+			AltaProveedor altaProveedor = new AltaProveedor();
+			altaProveedor.crearProveedor(driver, wait, nombreProveedor, docProveedor);
+			System.out.println("Se finalizó correctamente el alta de Proveedor");
+		}else {
+			System.out.println("Ya existía el proveedor " + nombreProveedor);
+		}
 		
 		
 		//			Alta de Acuerdo			
@@ -353,14 +410,14 @@ public class ClaseEjecutora
 		
 		System.out.println("Buscando el acuerdo " + acuerdo);
 		BusquedaAcuerdo busquedaAcuerdo = new BusquedaAcuerdo();
-		int cantAcuerdo = busquedaAcuerdo.buscarAcuerdo(driver, acuerdo);
+		int cantAcuerdo = busquedaAcuerdo.buscarAcuerdo(driver, acuerdo, wait);
 		System.out.println("Se encontraron " + cantAcuerdo + " Acuerdos con la descripcion ingresada");
 
 		if (cantAcuerdo == 0) {	
 		
 			System.out.println("Creando Acuerdo");
 			AltaAcuerdo altaAcuerdo = new AltaAcuerdo();
-			altaAcuerdo.crearAcuerdo(driver, wait, docProveedor, fechaDesde, fechaHasta, version, acuerdo, precioAcuerdo, markUpAcuerdo);
+			altaAcuerdo.crearAcuerdo(driver, wait, docProveedor, fechaDesde, fechaHasta, clase, subclase, acuerdo, precioAcuerdo, markUpAcuerdo);
 			System.out.println("Se finalizó correctamente el alta de Acuerdo");
 
 			System.out.println("Ingresando a la Aprobación de Acuerdo");
@@ -386,14 +443,14 @@ public class ClaseEjecutora
 		
 		System.out.println("Buscando el servicio " + servicio);
 		BusquedaServicio busquedaServicio = new BusquedaServicio();
-		int cantServicio = busquedaServicio.buscarServicio(driver, servicio);
+		int cantServicio = busquedaServicio.buscarServicio(driver, servicio, wait);
 		System.out.println("Se encontraron " + cantServicio + " Servicios con la descripcion ingresada");
 		
 		if (cantServicio == 0) {
 
 			System.out.println("Creando Servicio");
 			AltaServicio altaServicio = new AltaServicio();
-			altaServicio.crearServicio(driver, wait, fechaDesde, fechaHasta, version, acuerdo, servicio);
+			altaServicio.crearServicio(driver, wait, fechaHasta, clase, subclase, acuerdo, servicio);
 			System.out.println("Se finalizó correctamente el alta de Servicio");
 
 			System.out.println("Ingresando a la Aprobación de Servicio");
@@ -418,14 +475,14 @@ public class ClaseEjecutora
 		
 		System.out.println("Buscando el producto " + producto);
 		BusquedaProducto busquedaProducto = new BusquedaProducto();
-		int cantProducto = busquedaProducto.buscarProducto(driver, producto);
+		int cantProducto = busquedaProducto.buscarProducto(driver, producto, wait);
 		System.out.println("Se encontraron " + cantProducto + " Productos con la descripcion ingresada");
 	
 		if (cantProducto == 0) {
 			
 			System.out.println("Creando Producto");
 			AltaProducto altaProducto = new AltaProducto();
-			altaProducto.crearProducto(driver, wait, cantProducto, fechaDesde, fechaHasta, clase, subclase, servicio, subtasa, producto);
+			altaProducto.crearProducto(driver, wait, cantProducto, fechaHasta, clase, subclase, servicio, subtasa, producto);
 			System.out.println("Se finalizó correctamente el alta de Producto");
 			
 			System.out.println("Ingresando a la Aprobación de Producto");
@@ -451,7 +508,7 @@ public class ClaseEjecutora
         System.out.println("Generando Cotización");
 		/*         Generar Cotización        */
 		NewCotizacion nuevaCoti = new NewCotizacion();
-		String operacion = nuevaCoti.cotizacion(driver, wait, producto, version, docProveedor);
+		String operacion = nuevaCoti.cotizacion(driver, wait, producto, version, servicio, nombreProveedor, acuerdo, docProveedor, "sinVersionTentativa", "Normal");
 	    System.out.println("Se generó la operación 200" + operacion + " maravillosamente.");
 		
 	    System.out.println("Accediendo a la operación");
@@ -463,8 +520,10 @@ public class ClaseEjecutora
 		System.out.println("Aprobando Cotización");
 	    /*      Aprobar Operación        */
 		AprobarCotizacion aprobarCoti = new AprobarCotizacion();
-		aprobarCoti.aprobarCotizacion(driver, wait);
+		aprobarCoti.aprobarCotizacion(driver, wait, operacion);
 		System.out.println("Cotización Aprobada Correctamente");
+		
+		driver.quit();
 	}
 	
 }
